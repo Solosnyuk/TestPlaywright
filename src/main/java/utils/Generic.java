@@ -1,3 +1,5 @@
+package utils;
+
 import com.microsoft.playwright.*;
 
 public class Generic {
