@@ -65,4 +65,23 @@ public class Generic {
     public String getInnerText(Locator locator) {
         return locator.innerText();
     }
+
+    public void selectByValue(Locator selectLocator, String value) {
+        selectLocator.selectOption(value);
+    }
+
+    public void check(Locator checkboxLocator) {
+        checkboxLocator.check();
+    }
+
+    public void uncheck(Locator checkboxLocator) {
+        checkboxLocator.uncheck();
+    }
+
+    public void selectRadio(Locator radioLocator) {
+        radioLocator.check();
+    }
+
+
+
 }
