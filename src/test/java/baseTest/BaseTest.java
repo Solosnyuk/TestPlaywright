@@ -9,6 +9,7 @@ public class BaseTest {
     protected static Browser browser;
     protected BrowserContext context;
     protected Page page;
+    protected MainPage mainPage;
 
     @BeforeAll
     public static void launchBrowser() {
@@ -21,6 +22,9 @@ public class BaseTest {
     public void createContextAndPage() {
         context = browser.newContext();
         page = context.newPage();
+        mainPage = new MainPage(page);
+
+        navigateToMainPage();
     }
 
     protected void navigateToMainPage() {
