@@ -1,13 +1,20 @@
 package pages;
 
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import utils.Generic;
 
 public class WebFormPage {
+    private Page page;
+
+    public WebFormPage(Page page) {
+        this.page = page;
+    }
+
     private Generic generic = new Generic("");
 
-    private String textInput = "id=\"my-text-id\"";
-    private String password = "name=\"my-password\"";
+    private String textInput = "my-text-id";
+    private String password = "input[name='my-password']";
 
     private String dropdownSelect = "class=\"form-select\"";
     private String dropdownValueOne = "1";  // Только значение
@@ -29,12 +36,14 @@ public class WebFormPage {
     private String checkedRadio = "id=\"my-radio-1\"";
     private String defaultRadio = "id=\"my-radio-2\"";
 
-    public Locator loc_TextUnput() {
+    private String submit = "Submit";
+
+    public Locator loc_TextInput() {
         return generic.getById(textInput);
     }
 
     public Locator loc_Password() {
-        return generic.getByLocator(password);
+        return page.locator(password);
     }
 
     public Locator loc_Dropdown() {
@@ -77,6 +86,10 @@ public class WebFormPage {
         return generic.getByLocator(defaultRadio);
     }
 
+    public Locator loc_Submit() {
+        return generic.getByText(submit);
+    }
+
     public void fillDataList(String value) {
         generic.fill(loc_DataListInput(), value);
     }
@@ -104,5 +117,4 @@ public class WebFormPage {
     public String getDataListValue() {
         return loc_DataListInput().inputValue();
     }
-
 }
