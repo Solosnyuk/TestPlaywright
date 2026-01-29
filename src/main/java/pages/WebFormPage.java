@@ -30,6 +30,12 @@ public class WebFormPage {
 
     private String fileInput = "name=\"my-file\"";
 
+    private String disabledInput = "input[name='my-disabled']";
+    private String readonlyInput = "input[name='my-readonly']";
+
+    private String colorInput = "input[name='my-colors']";
+    private String dateInput = "input[name='my-date']";
+
     private String checkedCheckbox = "id=\"my-check-1\"";
     private String defaultCheckbox = "id=\"my-check-2\"";
 
@@ -37,6 +43,7 @@ public class WebFormPage {
     private String defaultRadio = "id=\"my-radio-2\"";
 
     private String submit = "Submit";
+
 
     public Locator loc_TextInput() {
         return generic.getById(textInput);
@@ -90,8 +97,33 @@ public class WebFormPage {
         return generic.getByText(submit);
     }
 
+    public Locator loc_ColorInput() {
+        return generic.getByLocator(colorInput);
+    }
+
+    public void setColorWithJavaScript(String hexColor) {
+        loc_ColorInput().evaluate("(element, color) => { element.value = color; }", hexColor);
+    }
+
+    public Locator loc_DateInput() {
+        return generic.getByLocator(dateInput);
+    }
+
+    public void setDate(String date) {
+        generic.fill(loc_DateInput(), date);
+    }
+
+
     public void fillDataList(String value) {
         generic.fill(loc_DataListInput(), value);
+    }
+
+    public Locator loc_DisabledInput() {
+        return generic.getByLocator(disabledInput);
+    }
+
+    public Locator loc_ReadonlyInput() {
+        return generic.getByLocator(readonlyInput);
     }
 
     public void selectDataListSF() {
