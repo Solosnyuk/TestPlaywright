@@ -16,17 +16,12 @@ public class WebFormPage {
     private String textInput = "my-text-id";
     private String password = "input[name='my-password']";
 
-    private String dropdownSelect = "class=\"form-select\"";
-    private String dropdownValueOne = "1";  // Только значение
+    private String dropdownSelect = "select[name='my-select']";
+    private String dropdownValueOne = "1";
     private String dropdownValueTwo = "2";
     private String dropdownValueThree = "3";
 
     private String dropDownDataList = "name=\"my-datalist\"";
-    private String dropdownDatalistValueSF = "San Francisco";
-    private String dropdownDatalistValueNY = "New York";
-    private String dropdownDatalistValueS = "Seattle";
-    private String dropdownDatalistValueLA = "Los Angeles";
-    private String dropdownDatalistValueC = "Chicago";
 
     private String fileInput = "name=\"my-file\"";
 
@@ -58,7 +53,7 @@ public class WebFormPage {
     }
 
     public void selectDropdownOptionOne() {
-        generic.selectByValue(loc_Dropdown(), dropdownValueOne);
+        loc_Dropdown().selectOption("1");
     }
 
     public void selectDropdownOptionTwo() {
@@ -71,6 +66,10 @@ public class WebFormPage {
 
     public Locator loc_DataListInput() {
         return generic.getByLocator(dropDownDataList);
+    }
+
+    public DropDownSelect getDropdownSelect() {
+        return new DropDownSelect(loc_Dropdown());
     }
 
     public Locator loc_FileInput() {
@@ -101,10 +100,6 @@ public class WebFormPage {
         return generic.getByLocator(colorInput);
     }
 
-    public void setColorWithJavaScript(String hexColor) {
-        loc_ColorInput().evaluate("(element, color) => { element.value = color; }", hexColor);
-    }
-
     public Locator loc_DateInput() {
         return generic.getByLocator(dateInput);
     }
@@ -113,40 +108,11 @@ public class WebFormPage {
         generic.fill(loc_DateInput(), date);
     }
 
-
-    public void fillDataList(String value) {
-        generic.fill(loc_DataListInput(), value);
-    }
-
     public Locator loc_DisabledInput() {
         return generic.getByLocator(disabledInput);
     }
 
     public Locator loc_ReadonlyInput() {
         return generic.getByLocator(readonlyInput);
-    }
-
-    public void selectDataListSF() {
-        fillDataList(dropdownDatalistValueSF);
-    }
-
-    public void selectDataListNY() {
-        fillDataList(dropdownDatalistValueNY);
-    }
-
-    public void selectDataListSeattle() {
-        fillDataList(dropdownDatalistValueS);
-    }
-
-    public void selectDataListLA() {
-        fillDataList(dropdownDatalistValueLA);
-    }
-
-    public void selectDataListChicago() {
-        fillDataList(dropdownDatalistValueC);
-    }
-
-    public String getDataListValue() {
-        return loc_DataListInput().inputValue();
     }
 }
