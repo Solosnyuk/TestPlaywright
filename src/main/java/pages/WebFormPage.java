@@ -2,6 +2,8 @@ package pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import pages.components.DropDownSelect;
+import pages.components.RangeSlider;
 import utils.Generic;
 
 public class WebFormPage {
@@ -36,6 +38,8 @@ public class WebFormPage {
 
     private String checkedRadio = "id=\"my-radio-1\"";
     private String defaultRadio = "id=\"my-radio-2\"";
+
+    private String rangeSlider = "input[type='range']";
 
     private String submit = "Submit";
 
@@ -102,6 +106,14 @@ public class WebFormPage {
 
     public Locator loc_DateInput() {
         return generic.getByLocator(dateInput);
+    }
+
+    public Locator loc_RangeSlider() {
+        return page.locator(rangeSlider);
+    }
+
+    public RangeSlider getRangeSlider() {
+        return new RangeSlider(loc_RangeSlider());
     }
 
     public void setDate(String date) {
