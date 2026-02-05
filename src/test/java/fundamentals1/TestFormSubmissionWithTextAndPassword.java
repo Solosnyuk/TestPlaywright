@@ -7,6 +7,7 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
+import jdk.jfr.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.WebFormPage;
@@ -14,6 +15,7 @@ import pages.WebFormPage;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Epic("PW-Fundamentals-1")
+@Category("Первая группа")
 public class TestFormSubmissionWithTextAndPassword extends BaseTest {
     String testText = TextGenerator.generateTextUpTo(120);
     String testPassword = PasswordGenerate.generatePasswordUpTo(120);
