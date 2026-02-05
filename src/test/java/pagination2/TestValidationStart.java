@@ -5,6 +5,7 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
+import jdk.jfr.Category;
 import org.junit.jupiter.api.Test;
 import pages.NavigationPage;
 import pages.WebFormPage;
@@ -13,6 +14,7 @@ import pages.WebFormPage;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("PW-Pagination-2")
+@Category("Вторая группа")
 public class TestValidationStart extends BaseTest {
 
     @Test

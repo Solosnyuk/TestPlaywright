@@ -7,13 +7,14 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.AllureId;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
+import jdk.jfr.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.WebFormPage;
 
 import static org.testng.AssertJUnit.assertTrue;
-
 @Epic("PW-Fundamentals-1")
+@Category("Первая группа")
 public class TestColorAndDateFormSubmission extends BaseTest {
         @Test
         @DisplayName("Проверка отправки формы с цветом и датой")

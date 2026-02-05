@@ -11,7 +11,6 @@ public class NavigationPage {
         this.generic = new Generic(page);
     }
 
-    // Селекторы
     private String paginationContainer = "ul.pagination";
     private String previousButton = "li.page-item:has-text('Previous')";
     private String nextButton = "li.page-item:has-text('Next')";
@@ -19,7 +18,6 @@ public class NavigationPage {
     private String pageTwoButton = "ul.pagination li.page-item:nth-child(3)";
     private String pageThreeButton = "ul.pagination li.page-item:nth-child(4)";
 
-    // Методы для получения локаторов (как в MainPage)
     public Locator loc_PaginationContainer() {
         return generic.getByLocator(paginationContainer);
     }
