@@ -8,14 +8,13 @@ import io.qameta.allure.AllureId;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import org.junit.jupiter.api.DisplayName;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import pages.WebFormPage;
 
 import static org.testng.AssertJUnit.assertTrue;
 
 @Epic("PW-Fundamentals-1")
 public class TestColorAndDateFormSubmission extends BaseTest {
-    public class TestColor {
         @Test
         @DisplayName("Проверка отправки формы с цветом и датой")
         @Description("Тест проверяет, что данные из полей my-colors и my-date правильно передаются при отправке формы")
@@ -37,6 +36,5 @@ public class TestColorAndDateFormSubmission extends BaseTest {
             webFormPage.loc_Submit().click();
 
             assertTrue(page.locator("text=Form submitted").isVisible());
-        }
     }
 }
