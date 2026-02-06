@@ -1,75 +1,56 @@
-name: Java CI with Allure Report
+name: Java Tests with Allure
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:  # Ручной запуск
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      
-    - name: Set up JDK 17
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Java
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
         
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-        
-    - name: Install AspectJ Weaver explicitly
+    - name: Run Tests
       run: |
-        mvn dependency:copy-dependencies
-        echo "AspectJ установлен"
-        
-    - name: Run tests with Allure (with retry)
-      continue-on-error: true
-      run: |
-        # Первый запуск может упасть из-за проблем с AspectJ
-        mvn clean test -DskipTests=false || true
-        # Второй запуск обычно успешный
-        mvn test -DskipTests=false
+        # Устанавливаем переменные окружения для стабильности
+        export MAVEN_OPTS="-Xmx2g -XX:+ExitOnOutOfMemoryError"
+        mvn clean compile test-compile
+        mvn test -DskipTests=false -DfailIfNoTests=false
         
     - name: Generate Allure Report
-      if: success() || failure()  # Генерировать отчет даже при падении тестов
+      if: always()
       run: |
         mvn allure:report
-        # Создаем index.html для GitHub Pages
-        cp -r target/site/allure-maven-plugin allure-report
         
-    - name: Upload Allure results
+    - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: allure-results
-        path: target/allure-results/
-        retention-days: 7
-        
-    - name: Upload Allure Report as artifact
+        name: test-results
+        path: |
+          target/allure-results
+          target/surefire-reports
+          
+    - name: Upload Allure Report
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: allure-report
-        path: allure-report/
-        retention-days: 7
+        path: target/site/allure-maven-plugin
         
-    - name: Deploy Allure Report to GitHub Pages
-      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && (success() || failure())
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main' && (success() || failure())
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: allure-report
-        keep_files: false
-        force_orphan: true  # Очистить предыдущие отчёты
+        folder: target/site/allure-maven-plugin
+        branch: gh-pages
+        clean: true
