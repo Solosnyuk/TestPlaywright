@@ -11,7 +11,6 @@ on:
         required: true
         default: 'true'
 
-
 jobs:
   test-api:
     runs-on: ubuntu-latest
@@ -23,6 +22,22 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      # ДОБАВЛЕНО: Установка браузеров Playwright
+      - name: Install Playwright Browsers
+        run: |
+          echo "Installing Playwright browsers..."
+          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install chromium"
+          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+        continue-on-error: false
+
+      # Альтернативный вариант через npx (если mvn exec не работает)
+      - name: Alternative Playwright install (if needed)
+        if: failure()
+        run: |
+          npx playwright@1.40.0 install chromium
+          npx playwright@1.40.0 install-deps
+        continue-on-error: true
 
       - name: Prepare Allure directories
         run: |
@@ -38,7 +53,8 @@ jobs:
         
       - name: Run UI tests
         run: |
-          mvn clean test
+          # Добавлен headless флаг для CI окружения
+          mvn clean test -Dheadless=true
           
       - name: Upload UI Allure results
         if: always()  
