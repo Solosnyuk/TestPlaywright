@@ -14,7 +14,6 @@ import pages.WebFormPage;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
     @Epic("PW-Fundamentals-1")
-    @Category("Первая группа")
     public class TestSelectDropdownInitialStateAndSubmission extends BaseTest {
         @Test
         @DisplayName("Проверка выпадающего списка my-select")

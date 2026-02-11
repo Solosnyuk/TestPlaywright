@@ -15,7 +15,6 @@ import pages.WebFormPage;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Epic("PW-Fundamentals-1")
-@Category("Первая группа")
 public class TestFormSubmissionWithTextAndPassword extends BaseTest {
     String testText = TextGenerator.generateTextUpTo(120);
     String testPassword = PasswordGenerate.generatePasswordUpTo(120);

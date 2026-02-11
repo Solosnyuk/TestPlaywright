@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Epic("PW-Fundamentals-1")
-@Category("Первая группа")
 public class TestDisabledAndReadonlyElements extends BaseTest {
     @Test
     @DisplayName("Проверка  невозможности редактирования элементов my-disabled и my-readonly")
