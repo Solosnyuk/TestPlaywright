@@ -14,7 +14,6 @@ import pages.WebFormPage;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("PW-Pagination-2")
-@Category("Вторая группа")
 public class TestValidationStart extends BaseTest {
 
     @Test
