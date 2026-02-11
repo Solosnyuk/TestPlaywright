@@ -23,12 +23,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Создаем необходимые директории перед началом
-      - name: Prepare directories
-        run: |
-          mkdir -p target/allure-results
-          mkdir -p target/allure-report/history
-
       - name: Download previous Allure history
         uses: actions/download-artifact@v4
         with:
