@@ -38,7 +38,7 @@ jobs:
         
       - name: Run UI tests
         run: |
-          mvn clean test -Dgroups=UI  
+          mvn clean test
           
       - name: Upload UI Allure results
         if: always()  
