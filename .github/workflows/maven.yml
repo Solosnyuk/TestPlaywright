@@ -41,12 +41,6 @@ jobs:
         with:
           name: allure-ui
           path: target/allure-results
-
-      - name: Download UI results
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-ui
-          path: target/allure-results/ui
           
       - name: Generate Allure report
         working-directory: ${{ github.workspace }}
