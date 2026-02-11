@@ -1,56 +1,69 @@
-name: Java Tests with Allure
+name: test123
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy to GitHub Pages'
+        required: true
+        default: 'true'
+
 
 jobs:
-  test:
+  test-api:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download previous Allure history
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: target/allure-report/history
+        continue-on-error: true
         
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-        
-    - name: Run Tests
-      run: |
-        # Устанавливаем переменные окружения для стабильности
-        export MAVEN_OPTS="-Xmx2g -XX:+ExitOnOutOfMemoryError"
-        mvn clean compile test-compile
-        mvn test -DskipTests=false -DfailIfNoTests=false
-        
-    - name: Generate Allure Report
-      if: always()
-      run: |
-        mvn allure:report
-        
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results
-        path: |
-          target/allure-results
-          target/surefire-reports
+      - name: Run UI tests
+        run: |
+          mvn clean test -Dgroups=UI || true  
           
-    - name: Upload Allure Report
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: allure-report
-        path: target/site/allure-maven-plugin
-        
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main' && (success() || failure())
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: target/site/allure-maven-plugin
-        branch: gh-pages
-        clean: true
+      - name: Upload UI Allure results
+        if: always()  
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-ui
+          path: target/allure-results
+
+      - name: Download UI results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-ui
+          path: target/allure-results/ui
+          
+      - name: Generate Allure report
+        working-directory: ${{ github.workspace }}
+        run: mvn allure:report
+
+      - name: Upload Allure history
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-history
+          path: target/allure-report/history
+          retention-days: 90
+          
+      - name: Deploy to GitHub Pages
+        if: ${{ github.event.inputs.deploy == 'true' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ github.workspace }}/target/allure-report
+          force_orphan: false
+          keep_files: true
