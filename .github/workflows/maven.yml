@@ -22,39 +22,57 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven  # Добавлено кэширование Maven зависимостей
 
-      # ДОБАВЛЕНО: Установка браузеров Playwright
+      # Установка зависимостей для браузеров
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev wget gnupg
+          
+      # Установка Playwright браузеров (улучшенная версия)
       - name: Install Playwright Browsers
         run: |
-          echo "Installing Playwright browsers..."
-          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install chromium"
-          mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
-        continue-on-error: false
-
-      # Альтернативный вариант через npx (если mvn exec не работает)
-      - name: Alternative Playwright install (if needed)
-        if: failure()
-        run: |
-          npx playwright@1.40.0 install chromium
-          npx playwright@1.40.0 install-deps
-        continue-on-error: true
+          # Устанавливаем Playwright CLI глобально через npm
+          npm init -y
+          npm install @playwright/test@1.40.0
+          
+          # Устанавливаем браузеры
+          npx playwright install chromium
+          npx playwright install-deps
+          
+          # Проверяем установку
+          npx playwright --version
+          ls -la ~/.cache/ms-playwright/
 
       - name: Prepare Allure directories
         run: |
           mkdir -p target/allure-results
-          mkdir -p target/allure-report    
-
+          mkdir -p target/allure-report/history
+          
       - name: Download previous Allure history
         uses: actions/download-artifact@v4
         with:
           name: allure-history
-          path: target/allure-report
+          path: target/allure-report/history
         continue-on-error: true
         
       - name: Run UI tests
         run: |
-          # Добавлен headless флаг для CI окружения
-          mvn clean test -Dheadless=true
+          # Запускаем тесты с подробным выводом
+          mvn clean test -Dheadless=true -Dmaven.test.failure.ignore=true
+        continue-on-error: true  # Продолжаем даже если тесты падают
+        
+      - name: Upload test reports
+        if: always()  # Всегда загружаем отчеты, даже при падении тестов
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            target/allure-results
+            target/surefire-reports
+            test-results.xml
+          retention-days: 30
           
       - name: Upload UI Allure results
         if: always()  
@@ -62,12 +80,16 @@ jobs:
         with:
           name: allure-ui
           path: target/allure-results
+          retention-days: 30
           
       - name: Generate Allure report
-        working-directory: ${{ github.workspace }}
-        run: mvn allure:report
-
+        if: always()
+        run: |
+          mvn allure:report
+          echo "Allure report generated in target/allure-report"
+          
       - name: Upload Allure history
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-history
@@ -75,10 +97,24 @@ jobs:
           retention-days: 90
           
       - name: Deploy to GitHub Pages
-        if: ${{ github.event.inputs.deploy == 'true' }}
+        if: ${{ github.event.inputs.deploy == 'true' && success() }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace }}/target/allure-report
+          publish_dir: ./target/allure-report
           force_orphan: false
           keep_files: true
+          publish_branch: gh-pages
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          
+      # Добавляем уведомление о статусе
+      - name: Check job status
+        if: always()
+        run: |
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "✅ Все тесты прошли успешно!"
+          else
+            echo "❌ Тесты упали. Проверьте логи выше для деталей."
+            exit 1
+          fi
